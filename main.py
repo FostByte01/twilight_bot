@@ -41,7 +41,7 @@ async def _8ball(ctx):
                  'My sources say no',
                  'Outlook is not so good',
                  'Very doubtful']
-    await ctx.send(choice(responses))
+    await ctx.send(f'{choice(responses)} {ctx.message.author.mention}')
 
 
 @bot.command(pass_context=True)
