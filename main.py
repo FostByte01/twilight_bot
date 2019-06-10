@@ -20,6 +20,7 @@ async def on_message(message):
 
 @bot.command(aliases=['8ball'], pass_context=True)
 async def _8ball(ctx):
+    """Ask the magic 8 ball"""
     responses = ['It is certain',
                  'It is decidedly so',
                  'Without a doubt',
@@ -45,11 +46,13 @@ async def _8ball(ctx):
 
 @bot.command(pass_context=True)
 async def flip(ctx):
+    """Flip a coin"""
     await ctx.send(f'{ctx.message.author.mention}, I got: {choice(["heads", "tails"])}')
 
 
 @bot.command(pass_context=True)
 async def ping(ctx):
+    """"Test command"""
     await ctx.send(f'Pong! {ctx.message.author.mention}')
 
 
