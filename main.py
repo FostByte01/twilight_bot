@@ -1,14 +1,44 @@
 from random import choice
+import datetime
+import json
 
+from discord import Embed
 from discord.ext import commands
 
 bot = commands.Bot(command_prefix="t!")
 
+config = json.loads(open('config.json', 'r').read())
 
 @bot.event
 async def on_ready():
     print("Twilight bot initialized and ready")
     print(f"User: {bot.user}")
+
+
+@bot.event
+async def on_member_join(member):
+    embed = Embed(color=0xbada55, description=f'Welcome to the server! You are member number {len(list(member.guild.members))}')
+    embed.set_thumbnail(url=member.avatar_url)
+    embed.set_author(name=member.name, icon_url=member.avatar_url)
+    embed.set_footer(text=member.guild, icon_url=member.guild.icon_url)
+    embed.timestamp = datetime.datetime.utcnow()
+
+    channel = bot.get_channel(id=config['join_leave_channel'])
+
+    await channel.send(embed=embed)
+
+
+@bot.event
+async def on_member_remove(member):
+    embed = Embed(color=0xbada55, description=f'Goodbye! Thank you for spending time with us!')
+    embed.set_thumbnail(url=member.avatar_url)
+    embed.set_author(name=member.name, icon_url=member.avatar_url)
+    embed.set_footer(text=member.guild, icon_url=member.guild.icon_url)
+    embed.timestamp = datetime.datetime.utcnow()
+
+    channel = bot.get_channel(id=config['join_leave_channel'])
+
+    await channel.send(embed=embed)
 
 
 @bot.event
@@ -56,4 +86,4 @@ async def ping(ctx):
     await ctx.send(f'Pong! {ctx.message.author.mention}')
 
 
-bot.run(open("token.txt", "r").read())
+bot.run(config['token'])
