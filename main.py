@@ -88,6 +88,7 @@ async def flip(ctx):
 
 @bot.command(pass_context=True)
 async def clear(ctx, count: int):
+    """Clear the specified amount of messages"""
     await ctx.channel.purge(limit=count+1)
 
 
