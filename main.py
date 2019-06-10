@@ -9,11 +9,17 @@ bot = commands.Bot(command_prefix="t!")
 
 config = json.loads(open('config.json', 'r').read())
 
+
 @bot.event
 async def on_ready():
     print("Twilight bot initialized and ready")
     print(f"User: {bot.user}")
 
+
+@bot.event
+async def on_ready():
+    print("Twilight bot initialized and ready")
+    print(f"User: {bot.user}")
 
 @bot.event
 async def on_member_join(member):
@@ -23,7 +29,7 @@ async def on_member_join(member):
     embed.set_footer(text=member.guild, icon_url=member.guild.icon_url)
     embed.timestamp = datetime.datetime.utcnow()
 
-    channel = bot.get_channel(id=config['join_leave_channel'])
+    channel = bot.get_channel(id=config[member.guild.name]['join_leave_channel'])
 
     await channel.send(embed=embed)
 
@@ -36,7 +42,7 @@ async def on_member_remove(member):
     embed.set_footer(text=member.guild, icon_url=member.guild.icon_url)
     embed.timestamp = datetime.datetime.utcnow()
 
-    channel = bot.get_channel(id=config['join_leave_channel'])
+    channel = bot.get_channel(id=config[member.guild.name]['join_leave_channel'])
 
     await channel.send(embed=embed)
 
