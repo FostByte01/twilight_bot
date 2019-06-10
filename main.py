@@ -83,7 +83,12 @@ async def _8ball(ctx):
 @bot.command(pass_context=True)
 async def flip(ctx):
     """Flip a coin"""
-    await ctx.send(f'{ctx.message.author.mention}, I got: {choice(["heads", "tails"])}')
+    await ctx.send(f'{ctx.message.author.mention}, I got {choice(["heads", "tails"])}')
+
+
+@bot.command(pass_context=True)
+async def clear(ctx, count: int):
+    await ctx.channel.purge(limit=count+1)
 
 
 @bot.command(pass_context=True)
