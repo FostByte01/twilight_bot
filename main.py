@@ -21,6 +21,7 @@ async def on_ready():
     print("Twilight bot initialized and ready")
     print(f"User: {bot.user}")
 
+
 @bot.event
 async def on_member_join(member):
     embed = Embed(color=0xbada55, description=f'Welcome to the server! You are member number {len(list(member.guild.members))}')
@@ -86,7 +87,7 @@ async def flip(ctx):
     await ctx.send(f'{ctx.message.author.mention}, I got {choice(["heads", "tails"])}')
 
 
-@bot.command(pass_context=True)
+@bot.command(aliases=['purge', 'remove'], pass_context=True)
 async def clear(ctx, count: int):
     """Clear the specified amount of messages"""
     await ctx.channel.purge(limit=count+1)
