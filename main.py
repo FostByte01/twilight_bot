@@ -4,6 +4,7 @@ import os
 
 from discord import Embed
 from discord.ext import commands
+import discord.utils
 
 bot = commands.Bot(command_prefix="t!")
 
@@ -18,6 +19,10 @@ async def on_ready():
 
 @bot.event
 async def on_member_join(member):
+    if config[member.guild.name]['verification_enabled']:
+        role = discord.utils.get(member.guild.roles, name="Unverified")
+        await member.add_roles(role)
+
     embed = Embed(color=0x9370DB, description=f'Welcome to the server! You are member number {len(list(member.guild.members))}')
     embed.set_thumbnail(url=member.avatar_url)
     embed.set_author(name=member.name, icon_url=member.avatar_url)
@@ -44,8 +49,18 @@ async def on_member_remove(member):
 
 @bot.event
 async def on_message(message):
+    if message.guild is None:
+        await bot.process_commands(message)
+        return
     if message.author != bot.user:
-        print(f"Message Sent: {message.author}: {message.content}")
+        verify_channel = config[message.guild.name]['verification_channel']
+        if message.content != 't!verify' and message.channel.id == verify_channel:
+            await message.channel.purge(limit=1)
+        unverified_role = discord.utils.get(message.author.guild.roles, name="Unverified")
+        if unverified_role in message.author.roles:
+            if message.channel.id != verify_channel or message.content != "t!verify":
+                await message.channel.purge(limit=1)
+                await message.author.send("You have not verified your account, please type 't!verify' in your servers verification channel")
     await bot.process_commands(message)
 
 for file in os.listdir('./cogs'):
