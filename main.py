@@ -57,10 +57,9 @@ async def on_message(message):
         if message.content != 't!verify' and message.channel.id == verify_channel:
             await message.channel.purge(limit=1)
         unverified_role = discord.utils.get(message.author.guild.roles, name="Unverified")
-        if unverified_role in message.author.roles:
-            if message.channel.id != verify_channel or message.content != "t!verify":
-                await message.channel.purge(limit=1)
-                await message.author.send("You have not verified your account, please type 't!verify' in your servers verification channel")
+        if unverified_role in message.author.roles and message.content != "t!verify":
+            await message.channel.purge(limit=1)
+            await message.author.send("You have not verified your account, please type 't!verify' in your servers verification channel")
     await bot.process_commands(message)
 
 for file in os.listdir('./cogs'):
