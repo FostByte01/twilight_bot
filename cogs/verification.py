@@ -1,5 +1,6 @@
 import json
 from random import choices
+import aiohttp
 
 from discord.ext import commands
 import discord.utils
@@ -29,11 +30,11 @@ class Verification(commands.Cog):
     @commands.command(pass_context=True)
     @commands.check(lambda ctx: ctx.message.channel.id == config[ctx.guild.name]['verification_channel'])
     async def verify(self, ctx):
-        words = ['shy', 'property', 'quack', 'half',
-                 'hair', 'zebra', 'sneeze', 'mist',
-                 'dinosaurs', 'nippy', 'overjoyed', 'imported',
-                 'protect', 'fairies', 'sticks', 'empty',
-                 'ill', 'road', 'screw', 'annoyed']
+        async with aiohttp.ClientSession() as client:
+            async with client.get("https://www.mit.edu/~ecprice/wordlist.10000") as response:
+                text = await response.text()
+                words = text.splitlines()
+            await client.close()
         random_phrase = ' '.join(choices(words, k=3))
         await ctx.message.author.send(f"Please reply with the following phrase: {random_phrase}")
         await self.bot.wait_for("message", timeout=30, check=lambda message: message.content == random_phrase)
