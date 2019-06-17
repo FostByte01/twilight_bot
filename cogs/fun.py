@@ -5,7 +5,7 @@ from discord.ext import commands
 
 class Fun(commands.Cog):
 
-    def __init(self, bot):
+    def __init__(self, bot):
         self.bot = bot
 
     @commands.command(name="8ball", pass_context=True)
