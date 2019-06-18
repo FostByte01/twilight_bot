@@ -18,7 +18,6 @@ async def on_ready():
     for server in bot.guilds:
         if str(server.id) not in config:
             config[server.id] = {
-                "join_leave_channel": None,
                 "verification_channel": None,
                 "verification_enabled": False,
                 "members": {
@@ -34,30 +33,28 @@ async def on_member_join(member):
         role = discord.utils.get(member.guild.roles, name="Unverified")
         await member.add_roles(role)
 
-    if config[str(member.guild.id)]['join_leave_channel'] is not None:
-        embed = Embed(color=0x9370DB, description=f'Welcome to the server! You are member number {len(list(member.guild.members))}')
-        embed.set_thumbnail(url=member.avatar_url)
-        embed.set_author(name=member.name, icon_url=member.avatar_url)
-        embed.set_footer(text=member.guild, icon_url=member.guild.icon_url)
-        embed.timestamp = datetime.datetime.utcnow()
+    embed = Embed(color=0x9370DB, description=f'Welcome to the server! You are member number {len(list(member.guild.members))}')
+    embed.set_thumbnail(url=member.avatar_url)
+    embed.set_author(name=member.name, icon_url=member.avatar_url)
+    embed.set_footer(text=member.guild, icon_url=member.guild.icon_url)
+    embed.timestamp = datetime.datetime.utcnow()
 
-        channel = bot.get_channel(id=config[str(member.guild.id)]['join_leave_channel'])
+    channel = bot.get_channel(id=member.guild.system_channel.id)
 
-        await channel.send(embed=embed)
+    await channel.send(embed=embed)
 
 
 @bot.event
 async def on_member_remove(member):
-    if config[str(member.guild.id)]['join_leave_channel'] is not None:
-        embed = Embed(color=0x9370DB, description=f'Goodbye! Thank you for spending time with us!')
-        embed.set_thumbnail(url=member.avatar_url)
-        embed.set_author(name=member.name, icon_url=member.avatar_url)
-        embed.set_footer(text=member.guild, icon_url=member.guild.icon_url)
-        embed.timestamp = datetime.datetime.utcnow()
+    embed = Embed(color=0x9370DB, description=f'Goodbye! Thank you for spending time with us!')
+    embed.set_thumbnail(url=member.avatar_url)
+    embed.set_author(name=member.name, icon_url=member.avatar_url)
+    embed.set_footer(text=member.guild, icon_url=member.guild.icon_url)
+    embed.timestamp = datetime.datetime.utcnow()
 
-        channel = bot.get_channel(id=config[str(member.guild.id)]['join_leave_channel'])
+    channel = bot.get_channel(id=member.guild.system_channel.id)
 
-        await channel.send(embed=embed)
+    await channel.send(embed=embed)
 
 
 @bot.event
