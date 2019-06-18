@@ -43,6 +43,9 @@ async def on_member_join(member):
 
     await channel.send(embed=embed)
 
+    config[str(member.guild.id)].update({str(member.id): {"win": 0, "loss": 0}})
+    json.dump(config, open('config.json', 'w'), indent=2, separators=(',', ': '))
+
 
 @bot.event
 async def on_member_remove(member):
@@ -55,6 +58,9 @@ async def on_member_remove(member):
     channel = bot.get_channel(id=member.guild.system_channel.id)
 
     await channel.send(embed=embed)
+
+    config[str(member.guild.id)].pop(str(member.id))
+    json.dump(config, open('config.json', 'w'), indent=2, separators=(',', ': '))
 
 
 @bot.event

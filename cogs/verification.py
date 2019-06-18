@@ -22,7 +22,7 @@ class Verification(commands.Cog):
             await ctx.guild.create_role(name="Unverified")
             channel = await ctx.guild.create_text_channel("Verification")
             config[str(ctx.guild.id)]['verification_channel'] = channel.id
-            json.dump(config, open('config.json', 'w'), indent=2, separators=(',', ': '), sort_keys=True)
+            json.dump(config, open('config.json', 'w'), indent=2, separators=(',', ': '))
             await ctx.message.add_reaction(u"\U0001F44D")
         else:
             await ctx.send("This server does not have verification enabled, please enable it first")
