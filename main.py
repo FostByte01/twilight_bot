@@ -64,7 +64,7 @@ async def on_message(message):
         await bot.process_commands(message)
         return
     if message.author != bot.user:
-        verify_channel = config[message.guild.id]['verification_channel']
+        verify_channel = config[str(message.guild.id)]['verification_channel']
         if message.content != 't!verify' and message.channel.id == verify_channel:
             await message.channel.purge(limit=1)
         unverified_role = discord.utils.get(message.author.guild.roles, name="Unverified")
