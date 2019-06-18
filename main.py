@@ -15,11 +15,22 @@ config = json.loads(open('config.json', 'r').read())
 async def on_ready():
     print("Twilight bot initialized and ready")
     print(f"User: {bot.user}")
+    for server in bot.guilds:
+        if str(server.id) not in config:
+            config[server.id] = {
+                "join_leave_channel": None,
+                "verification_channel": None,
+                "verification_enabled": False,
+                "members": {
+                    str(member.id): {"win": 0, "loss": 0} for member in server.members
+                }
+            }
+            json.dump(config, open('config.json', 'w'), indent=2, separators=(',', ': '))
 
 
 @bot.event
 async def on_member_join(member):
-    if config[member.guild.name]['verification_enabled']:
+    if config[member.guild.id]['verification_enabled']:
         role = discord.utils.get(member.guild.roles, name="Unverified")
         await member.add_roles(role)
 
@@ -29,7 +40,7 @@ async def on_member_join(member):
     embed.set_footer(text=member.guild, icon_url=member.guild.icon_url)
     embed.timestamp = datetime.datetime.utcnow()
 
-    channel = bot.get_channel(id=config[member.guild.name]['join_leave_channel'])
+    channel = bot.get_channel(id=config[member.guild.id]['join_leave_channel'])
 
     await channel.send(embed=embed)
 
@@ -42,7 +53,7 @@ async def on_member_remove(member):
     embed.set_footer(text=member.guild, icon_url=member.guild.icon_url)
     embed.timestamp = datetime.datetime.utcnow()
 
-    channel = bot.get_channel(id=config[member.guild.name]['join_leave_channel'])
+    channel = bot.get_channel(id=config[member.guild.id]['join_leave_channel'])
 
     await channel.send(embed=embed)
 
@@ -53,7 +64,7 @@ async def on_message(message):
         await bot.process_commands(message)
         return
     if message.author != bot.user:
-        verify_channel = config[message.guild.name]['verification_channel']
+        verify_channel = config[message.guild.id]['verification_channel']
         if message.content != 't!verify' and message.channel.id == verify_channel:
             await message.channel.purge(limit=1)
         unverified_role = discord.utils.get(message.author.guild.roles, name="Unverified")
