@@ -1,6 +1,8 @@
-from random import choice
+from random import choice, randint
+from asyncio import sleep
 
 from discord.ext import commands
+from discord import Member
 
 
 class Fun(commands.Cog):
@@ -38,6 +40,26 @@ class Fun(commands.Cog):
         """Flip a coin"""
         await ctx.send(f'{ctx.message.author.mention}, I got {choice(["heads", "tails"])}')
 
+    @commands.command(pass_context=True)
+    async def duel(self, ctx, enemy: Member):
+        await ctx.send(f"{ctx.message.author.name} challenges {enemy.name} to a duel!")
+        damage_moves = ["Damage dealt by {attacker}, applied to {defender}, amount {amount}"]
+        healing_moves = ["{attacker} healed for {amount} "]
+        author_health, enemy_health = 20, 20
+        winner = None
+        for turn in range(1, 5):
+            if author_health <= 0 or enemy_health <= 0:
+                break
+            elif turn % 2 == 0:
+                damage = randint(1, 5)
+                await ctx.send(f"{choice(damage_moves).format(attacker=ctx.message.author.name, defender=enemy.name, amount=damage)}")
+                enemy_health -= damage
+            else:
+                damage = randint(1, 5)
+                await ctx.send(f"{choice(damage_moves).format(defender=ctx.message.author.name, attacker=enemy.name, amount=damage)}")
+                author_health -= damage
+            await sleep(1)
+        await ctx.send(f"Final results {ctx.message.author.name}: {author_health}HP, {enemy.name}: {enemy_health}HP")
 
 def setup(bot):
     bot.add_cog(Fun(bot))
