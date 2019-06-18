@@ -1,8 +1,22 @@
-from random import choice, randint
+from random import choice, randint, shuffle
 from asyncio import sleep
 
 from discord.ext import commands
 from discord import Member
+
+
+class Duelist:
+    def __init__(self, member: Member):
+        self.member = member
+        self.health = 20
+        self.name = member.name
+        self.id = member.id
+
+    def heal(self, amount):
+        self.health += amount
+
+    def damage(self, amount):
+        self.health -= amount
 
 
 class Fun(commands.Cog):
@@ -44,22 +58,32 @@ class Fun(commands.Cog):
     async def duel(self, ctx, enemy: Member):
         await ctx.send(f"{ctx.message.author.name} challenges {enemy.name} to a duel!")
         damage_moves = ["Damage dealt by {attacker}, applied to {defender}, amount {amount}"]
-        healing_moves = ["{attacker} healed for {amount} "]
-        author_health, enemy_health = 20, 20
-        winner = None
-        for turn in range(1, 5):
-            if author_health <= 0 or enemy_health <= 0:
-                break
-            elif turn % 2 == 0:
-                damage = randint(1, 5)
-                await ctx.send(f"{choice(damage_moves).format(attacker=ctx.message.author.name, defender=enemy.name, amount=damage)}")
-                enemy_health -= damage
-            else:
-                damage = randint(1, 5)
-                await ctx.send(f"{choice(damage_moves).format(defender=ctx.message.author.name, attacker=enemy.name, amount=damage)}")
-                author_health -= damage
+        healing_moves = ["{target} healed for {amount} "]
+        player_one = Duelist(ctx.message.author)
+        player_two = Duelist(enemy)
+        order = [(player_one, player_two), (player_two, player_one)]
+        shuffle(order)
+        await sleep(1)
+        await ctx.send(f"By random chance: {order[0][0].name} will be going first")
+        await sleep(1)
+        for _ in range(0, 5):
+            for attacker, defender in order:
+                will_attack = choice([True, False])
+                damage_or_heal_amount = randint(1, 8)
+                if will_attack:
+                    await ctx.send(choice(damage_moves).format(attacker=attacker.name, defender=defender.name, amount=damage_or_heal_amount))
+                    defender.damage(damage_or_heal_amount)
+                else:
+                    await ctx.send(choice(healing_moves).format(target=attacker.name, amount=damage_or_heal_amount))
+                    attacker.heal(damage_or_heal_amount)
             await sleep(1)
-        await ctx.send(f"Final results {ctx.message.author.name}: {author_health}HP, {enemy.name}: {enemy_health}HP")
+        await(sleep(1))
+        winner = player_one.name if player_one.health > player_two.health else player_two.name
+        await ctx.send(f"The winner is: {winner}. Final stats: {player_one.name}: {player_one.health}, {player_two.name}: {player_two.health}")
+
+
+
+
 
 def setup(bot):
     bot.add_cog(Fun(bot))
