@@ -30,32 +30,34 @@ async def on_ready():
 
 @bot.event
 async def on_member_join(member):
-    if config[member.guild.id]['verification_enabled']:
+    if config[str(member.guild.id)]['verification_enabled']:
         role = discord.utils.get(member.guild.roles, name="Unverified")
         await member.add_roles(role)
 
-    embed = Embed(color=0x9370DB, description=f'Welcome to the server! You are member number {len(list(member.guild.members))}')
-    embed.set_thumbnail(url=member.avatar_url)
-    embed.set_author(name=member.name, icon_url=member.avatar_url)
-    embed.set_footer(text=member.guild, icon_url=member.guild.icon_url)
-    embed.timestamp = datetime.datetime.utcnow()
+    if config[str(member.guild.id)]['join_leave_channel'] is not None:
+        embed = Embed(color=0x9370DB, description=f'Welcome to the server! You are member number {len(list(member.guild.members))}')
+        embed.set_thumbnail(url=member.avatar_url)
+        embed.set_author(name=member.name, icon_url=member.avatar_url)
+        embed.set_footer(text=member.guild, icon_url=member.guild.icon_url)
+        embed.timestamp = datetime.datetime.utcnow()
 
-    channel = bot.get_channel(id=config[member.guild.id]['join_leave_channel'])
+        channel = bot.get_channel(id=config[str(member.guild.id)]['join_leave_channel'])
 
-    await channel.send(embed=embed)
+        await channel.send(embed=embed)
 
 
 @bot.event
 async def on_member_remove(member):
-    embed = Embed(color=0x9370DB, description=f'Goodbye! Thank you for spending time with us!')
-    embed.set_thumbnail(url=member.avatar_url)
-    embed.set_author(name=member.name, icon_url=member.avatar_url)
-    embed.set_footer(text=member.guild, icon_url=member.guild.icon_url)
-    embed.timestamp = datetime.datetime.utcnow()
+    if config[str(member.guild.id)]['join_leave_channel'] is not None:
+        embed = Embed(color=0x9370DB, description=f'Goodbye! Thank you for spending time with us!')
+        embed.set_thumbnail(url=member.avatar_url)
+        embed.set_author(name=member.name, icon_url=member.avatar_url)
+        embed.set_footer(text=member.guild, icon_url=member.guild.icon_url)
+        embed.timestamp = datetime.datetime.utcnow()
 
-    channel = bot.get_channel(id=config[member.guild.id]['join_leave_channel'])
+        channel = bot.get_channel(id=config[str(member.guild.id)]['join_leave_channel'])
 
-    await channel.send(embed=embed)
+        await channel.send(embed=embed)
 
 
 @bot.event
@@ -68,7 +70,7 @@ async def on_message(message):
         if message.content != 't!verify' and message.channel.id == verify_channel:
             await message.channel.purge(limit=1)
         unverified_role = discord.utils.get(message.author.guild.roles, name="Unverified")
-        if unverified_role in message.author.roles and message.content != "t!verify":
+        if unverified_role in message.author.roles and message.channel.id != verify_channel:
             await message.channel.purge(limit=1)
             await message.author.send("You have not verified your account, please type 't!verify' in your servers verification channel")
     await bot.process_commands(message)
