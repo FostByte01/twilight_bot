@@ -1,6 +1,6 @@
+import aiohttp
 import json
 from random import choices
-import aiohttp
 
 from discord.ext import commands
 import discord.utils
@@ -38,7 +38,7 @@ class Verification(commands.Cog):
         random_phrase = ' '.join(choices(words, k=3))
         await ctx.message.author.send(f"Please reply with the following phrase: {random_phrase}")
         await self.bot.wait_for("message", timeout=30, check=lambda message: message.content == random_phrase)
-        await ctx.message.author.send(f"Verification complete 👍")
+        await ctx.message.author.send("Verification complete 👍")
         role = discord.utils.get(ctx.guild.roles, name="Unverified")
         await ctx.message.author.remove_roles(role)
 
