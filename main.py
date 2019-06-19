@@ -2,8 +2,8 @@ import datetime
 import json
 import os
 
-from discord import Embed
 from discord.ext import commands
+from discord import Embed
 import discord.utils
 
 bot = commands.Bot(command_prefix="t!")
