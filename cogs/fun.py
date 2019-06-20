@@ -1,5 +1,6 @@
-from random import choice, randint, shuffle
 from asyncio import sleep
+import json
+from random import choice, randint, shuffle
 
 from discord.ext import commands
 from discord import Member
@@ -103,12 +104,28 @@ class Fun(commands.Cog):
         await(sleep(1))
 
         # Winner is player with more HP at the end
-        winner = player_one.name if player_one.health > player_two.health else player_two
+        winner = player_one if player_one.health > player_two.health else player_two
+        loser = player_one if winner == player_two else player_two
 
-        # Say who won
-        await ctx.send(f"The winner is: {winner}. Final stats: {player_one.name}: {player_one.health}, {player_two.name}: {player_two.health}")
+        # Load win/loss data
+        data = json.loads(open("config.json", "r").read())
+        member_data = data[str(ctx.message.guild.id)]["members"]
 
-        # TODO: Keep track of wins/losses
+        # Update win/loss counts
+        member_data[str(winner.id)]["win"] += 1
+        member_data[str(loser.id)]["loss"] += 1
+
+        # Save to variables
+        winner_stats = [member_data[str(winner.id)]["win"], member_data[str(winner.id)]["loss"]]
+        loser_stats = [member_data[str(loser.id)]["win"], member_data[str(loser.id)]["loss"]]
+
+        # Save new win/loss count
+        json.dump(data, open('config.json', 'w'), indent=2, separators=(',', ': '))
+
+        # Send who won, and stats
+        await ctx.send(f"The winner is: {winner.name}. Final stats: {player_one.name}: {player_one.health}, {player_two.name}: {player_two.health}")
+        await ctx.send(f"{winner.name} has: {winner_stats[0]} wins and {winner_stats[1]} losses. {loser.name} has: {loser_stats[0]} wins and {loser_stats[1]} losses.")
+
 
 def setup(bot):
     bot.add_cog(Fun(bot))
