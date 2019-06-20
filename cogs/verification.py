@@ -35,6 +35,7 @@ class Verification(commands.Cog):
     # Check to make sure the command was sent in the verification channel
     @commands.check(lambda ctx: ctx.message.channel.id == config[str(ctx.guild.id)]['verification_channel'])
     async def verify(self, ctx):
+        """Verify yourself (the bot will DM you)"""
         # Retrieve list of words from MIT page
         async with aiohttp.ClientSession() as client:
             async with client.get("https://www.mit.edu/~ecprice/wordlist.10000") as response:
