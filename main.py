@@ -50,7 +50,7 @@ async def on_member_join(member):
     await channel.send(embed=embed)
 
     # Initialize user data to JSON file
-    config[str(member.guild.id)].update({str(member.id): {"win": 0, "loss": 0}})
+    config[str(member.guild.id)]["members"].update({str(member.id): {"win": 0, "loss": 0}})
     json.dump(config, open('config.json', 'w'), indent=2, separators=(',', ': '))
 
 
@@ -69,7 +69,7 @@ async def on_member_remove(member):
     await channel.send(embed=embed)
 
     # Remove user data from JSON file
-    config[str(member.guild.id)].pop(str(member.id))
+    config[str(member.guild.id)]["members"].pop(str(member.id))
     json.dump(config, open('config.json', 'w'), indent=2, separators=(',', ': '))
 
 
