@@ -65,10 +65,17 @@ class Fun(commands.Cog):
 
         # All the possible attack moves
         # TODO: Add more attacks
-        damage_moves = ["Damage dealt by {attacker}, applied to {defender}, amount {amount}"]
+        damage_moves = ["{attacker} sends out their army of doggos at {defender}, dealing {amount} damage",
+                        "{attacker} conjures the mighty sharknado, dealing {amount} damage to {defender}",
+                        "{attacker} busts out the ultimate attack, and tickles {defender}, this results in {amount} damage",
+                        "While {attacker} takes a Beat Saber break, they accidentally hit {defender} and deal {amount} damage",
+                        "{attacker}"
+                        ]
         # All the possible healing moves
         # TODO: Add more healing moves
-        healing_moves = ["{target} healed for {amount} "]
+        healing_moves = ["Instead of attacking, {target} uses magical unicorn piss to heal themselves for {amount} HP",
+                         "Using the power of friendship and bonds, {target} gets back on their feet and heals for {amount} HP"
+                         ]
 
         # Create duelist objects for both players
         player_one = Duelist(ctx.message.author)
@@ -81,7 +88,7 @@ class Fun(commands.Cog):
         await sleep(1)
 
         # Duels have 5 rounds
-        for _ in range(0, 5):
+        for _ in range(0, 3):
 
             # One round consists of each player attacking and
             for attacker, defender in order:
@@ -89,7 +96,7 @@ class Fun(commands.Cog):
                 # Will this be a healing or attack turn?
                 will_attack = choice([True, False])
 
-                damage_or_heal_amount = randint(1, 8)
+                damage_or_heal_amount = randint(2, 8)
                 if will_attack:
                     # Pick random attack move and send it in chat, then deal damage to defender
                     await ctx.send(choice(damage_moves).format(attacker=attacker.name, defender=defender.name, amount=damage_or_heal_amount))
