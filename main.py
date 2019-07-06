@@ -98,6 +98,9 @@ async def on_guild_join(guild):
         "verification_channel": None,
         "verification_role": None,
         "reporting_channel": None,
+        "members": {
+            str(member.id): {"win": 0, "loss": 0} for member in guild.members
+        },
         "reports": {}
     }
     # Save to config file
