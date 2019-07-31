@@ -115,7 +115,7 @@ class Fun(commands.Cog):
         loser = player_one if winner == player_two else player_two
 
         # Load win/loss data
-        data = json.loads(open("config.json", "r").read())
+        data = json.loads(open("assets/config.json", "r").read())
         member_data = data[str(ctx.message.guild.id)]["members"]
 
         # Update win/loss counts
@@ -127,7 +127,7 @@ class Fun(commands.Cog):
         loser_stats = [member_data[str(loser.id)]["win"], member_data[str(loser.id)]["loss"]]
 
         # Save new win/loss count
-        json.dump(data, open('config.json', 'w'), indent=2, separators=(',', ': '))
+        json.dump(data, open('assets/config.json', 'w'), indent=2, separators=(',', ': '))
 
         # Send who won, and stats
         await ctx.send(f"The winner is: {winner.name}. Final stats: {player_one.name}: {player_one.health}, {player_two.name}: {player_two.health}")
