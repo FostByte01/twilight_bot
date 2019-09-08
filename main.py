@@ -44,7 +44,7 @@ async def on_message(message):
         unverified_role = get(message.author.guild.roles, name="Unverified")
         if unverified_role in message.author.roles and (
                 message.channel.id != verify_channel and message.content != "b!verify"):
-            await message.channel.purge(limit=1)
+            await message.delete()
             await message.author.send(
                 "You have not verified your account, please type 't!verify' in your server's verification channel")
     await bot.process_commands(message)
@@ -123,14 +123,11 @@ if __name__ == '__main__':
         # If config.json does not exist, it must be the first time starting the bot, run through configuration
         # If we are running from a docker container, fetch the token through an environment variable, otherwise, prompt the user to enter it
         environment = os.environ.get('BOT_TOKEN', None)
-        print(environment)
         token = environment if environment is not None else input(
             'It appears this is the first time running the bot. Please enter your bot\'s token: ')
-        token = input('It appears this is the first time running the bot. Please enter your bot\'s token: ')
         initial_config = {"token": token}
         json.dump(initial_config, open('assets/config.json', 'w'), indent=2, separators=(',', ': '))
-        os.mkdir('./assets/network_charts')
-        os.mkdir('./assets/role_charts')
+
     finally:
         for file in os.listdir('./cogs'):
             if file.endswith('.py'):

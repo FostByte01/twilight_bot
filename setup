@@ -1,2 +1,2 @@
 #!/bin/bash
-sudo docker build -t twilight_bot .
+docker build -t twilight_bot .
