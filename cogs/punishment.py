@@ -66,13 +66,6 @@ class Punishment(commands.Cog):
 		and optionally reporting channel if enabled)"""
 		report = IncidentReport(ctx.message.guild, 'Kick', reason, ctx.message.author, target)
 		receipt = report.generate_receipt()
-		await ctx.message.author.send(
-			f'User: {target.name}#{target.discriminator} has been kicked. The incident report is attached below:',
-			embed=receipt)
-		await target.send(
-							f'You have been kicked from {ctx.message.guild}. The incident report is attached below:',
-							embed=receipt
-						)
 		await ctx.message.guild.kick(target, reason=reason)
 		await ctx.send(f'User: {target.name}#{target.discriminator} has been kicked. Report ID: {report.report_number}')
 		reporting_enabled = True if self.config_full[str(ctx.message.guild.id)][
@@ -95,13 +88,6 @@ class Punishment(commands.Cog):
 		and optionally reporting channel if enabled)"""
 		report = IncidentReport(ctx.message.guild, 'Ban', reason, ctx.message.author, target)
 		receipt = report.generate_receipt()
-		await ctx.message.author.send(
-			f'User: {target.name}#{target.discriminator} has been banned. The incident report is attached below:',
-			embed=receipt)
-		await target.send(
-							f'You have been banned from {ctx.message.guild}. The incident report is attached below:',
-							embed=receipt
-						)
 		await ctx.message.guild.ban(target, reason=reason)
 		await ctx.send(f'User: {target.name}#{target.discriminator} has been banned. Report ID: {report.report_number}')
 		reporting_enabled = True if self.config_full[str(ctx.message.guild.id)][
@@ -124,9 +110,6 @@ class Punishment(commands.Cog):
 		user = await self.bot.fetch_user(target)
 		report = IncidentReport(ctx.message.guild, 'Hackban', reason, ctx.message.author, user)
 		receipt = report.generate_receipt()
-		await ctx.message.author.send(
-			f'User: {user.name}#{user.discriminator} has been hackbanned. The incident report is attached below:',
-			embed=receipt)
 		await ctx.message.guild.ban(user, reason=reason)
 		await ctx.send(f'User: {user.name}#{user.discriminator} has been hackbanned. Report ID: {report.report_number}')
 		reporting_enabled = True if self.config_full[str(ctx.message.guild.id)][
@@ -150,9 +133,6 @@ class Punishment(commands.Cog):
 		target = await self.bot.fetch_user(target_id)
 		report = IncidentReport(ctx.message.guild, 'Unban', reason, ctx.message.author, target)
 		receipt = report.generate_receipt()
-		await ctx.message.author.send(
-			f'User: {target.name}#{target.discriminator} has been unbanned. The incident report is attached below:',
-			embed=receipt)
 		await ctx.message.guild.unban(target)
 		await ctx.send(
 			f'User: {target.name}#{target.discriminator} has been unbanned. Report ID: {report.report_number}')
@@ -176,8 +156,6 @@ class Punishment(commands.Cog):
 		(receipt will be sent to recipient and issuer, and optionally reporting channel if enabled) """
 		report = IncidentReport(ctx.message.guild, action, reason, ctx.message.author, target)
 		receipt = report.generate_receipt()
-		await ctx.message.author.send(f'Incident report receipt:', embed=receipt)
-		await target.send(f'Incident report receipt:', embed=receipt)
 		reporting_enabled = True if self.config_full[str(ctx.message.guild.id)][
 										"reporting_channel"] is not None else False
 		if reporting_enabled:
